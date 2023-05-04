@@ -5,17 +5,22 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    public float moveSpeed = 10;
-    public float turnSpeed = 80;
+    public float moveSpeed = 10f;
+    public float turnSpeed = 750f;
     private Transform tr;
     private Animation anime;
 
-    void Start()
+    IEnumerator Start()
     {
         tr = GetComponent<Transform>();
         anime = GetComponent<Animation>();
 
         anime.Play("Idle");
+
+        float temp = turnSpeed;
+        turnSpeed = 0f;
+        yield return new WaitForSeconds(.3f);
+        turnSpeed = temp;
     }
 
     void Update()
@@ -28,9 +33,9 @@ public class PlayerCtrl : MonoBehaviour
         //Debug.Log("v = " + v);
 
         Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
-        tr.Translate(moveDir * Time.deltaTime * moveSpeed);
+        tr.Translate(moveSpeed * Time.deltaTime * moveDir);
 
-        tr.Rotate(Vector3.up * Time.deltaTime * turnSpeed * r);
+        tr.Rotate(r * Time.deltaTime * turnSpeed * Vector3.up);
 
         PlayerAnime(h, v);
     }
