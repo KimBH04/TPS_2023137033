@@ -14,6 +14,7 @@ public class BarrelCtrl : MonoBehaviour
     private Rigidbody rb;
 
     private int hitCount = 0;
+
     void Start()
     {
         tr = GetComponent<Transform>();
