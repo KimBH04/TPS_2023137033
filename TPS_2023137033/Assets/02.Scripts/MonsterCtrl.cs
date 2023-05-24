@@ -20,7 +20,9 @@ public class MonsterCtrl : MonoBehaviour
 
     public float attackDist = 2.0f;
 
-    public bool isDie = false;
+    public bool isDie= false;
+
+    private GameObject bloodEffect;
 
     private Transform monsterTr;
     private Transform playerTr;
@@ -32,8 +34,18 @@ public class MonsterCtrl : MonoBehaviour
 
     private readonly int hashHit = Animator.StringToHash("Hit");
 
+    private readonly int hashPlayerDie = Animator.StringToHash("PlayerDie");
+
+    private readonly int hashSpeed = Animator.StringToHash("Speed");
+
+    private readonly int hashDie = Animator.StringToHash("Die");
+
+    private int hp = 100;
+
     void Start()
     {
+        bloodEffect = Resources.Load<GameObject>("BloodSprayEffect");
+
         monsterTr = GetComponent<Transform>();
         playerTr = GameObject.FindWithTag("Player").GetComponent<Transform>();
 
@@ -45,13 +57,53 @@ public class MonsterCtrl : MonoBehaviour
         StartCoroutine(MonsterAction());
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log(other);
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.CompareTag("Bullet"))
         {
+            hp -= 10;
+            if (hp <= 0)
+            {
+                state = State.DIE;
+            }
+
+            Vector3 pos = collision.GetContact(0).point;
+            Quaternion rot = Quaternion.LookRotation(-collision.GetContact(0).normal);
+            ShowBloodEffect(pos, rot);
+
             Destroy(collision.gameObject);
             anime.SetTrigger(hashHit);
         }
+    }
+
+    void OnEnable()
+    {
+        PlayerCtrl.OnplayerDie += OnPlayerDie;
+    }
+
+    void OnDisable()
+    {
+        PlayerCtrl.OnplayerDie -= OnPlayerDie;
+    }
+
+    void ShowBloodEffect(Vector3 pos, Quaternion rot)
+    {
+        GameObject blood = Instantiate(bloodEffect, pos, rot, monsterTr);
+        Destroy(blood, 1f);
+    }
+
+    void OnPlayerDie()
+    {
+        StopAllCoroutines();
+
+        agent.isStopped = true;
+        anime.SetFloat(hashSpeed, Random.Range(.8f, 1.2f));
+        anime.SetTrigger(hashPlayerDie);
     }
 
     IEnumerator CheckMonsterState()
@@ -59,6 +111,8 @@ public class MonsterCtrl : MonoBehaviour
         while (!isDie)
         {
             yield return new WaitForSeconds(0.3f);
+            if (state == State.DIE)
+                yield break;
 
             float distance = Vector3.Distance(playerTr.position, monsterTr.position);
 
@@ -102,6 +156,13 @@ public class MonsterCtrl : MonoBehaviour
                     break;
 
                 case State.DIE:
+                    Debug.Log("Monster is die");
+
+                    isDie = true;
+                    agent.isStopped = true;
+                    anime.SetTrigger(hashDie);
+
+                    GetComponent<CapsuleCollider>().enabled = false;
                     break;
             }
             yield return new WaitForSeconds(.3f);

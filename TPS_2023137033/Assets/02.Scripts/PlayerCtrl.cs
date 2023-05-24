@@ -5,10 +5,16 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    public delegate void PlayerDieHandler();
+    public static event PlayerDieHandler OnplayerDie;
+
+    public float currHp;
     public float moveSpeed = 10f;
     public float turnSpeed = 750f;
     private Transform tr;
     private Animation anime;
+
+    private readonly float initHp = 100f;
 
     IEnumerator Start()
     {
@@ -38,6 +44,32 @@ public class PlayerCtrl : MonoBehaviour
         tr.Rotate(r * Time.deltaTime * turnSpeed * Vector3.up);
 
         PlayerAnime(h, v);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (currHp >= 0f && other.CompareTag("Punch"))
+        {
+            currHp -= 10f;
+            Debug.Log($"Player hp = {currHp / initHp}");
+
+            if (currHp <= 0f)
+            {
+                PlayerDie();
+            }
+        }
+    }
+
+    void PlayerDie()
+    {
+        Debug.Log("Player die!");
+
+        /*GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
+        foreach (GameObject monster in monsters)
+        {
+            monster.SendMessage("OnPlayerDie", SendMessageOptions.DontRequireReceiver);
+        }*/
+        OnplayerDie();
     }
 
     void PlayerAnime(float h, float v)
