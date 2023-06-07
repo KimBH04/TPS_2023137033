@@ -7,6 +7,7 @@ TagManager:
   - Bullet
   - Punch
   - Monster
+  - HP_Bar
   layers:
   - Default
   - TransparentFX

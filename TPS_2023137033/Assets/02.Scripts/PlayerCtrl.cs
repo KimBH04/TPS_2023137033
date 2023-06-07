@@ -1,7 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
@@ -16,10 +15,15 @@ public class PlayerCtrl : MonoBehaviour
 
     private readonly float initHp = 100f;
 
+    private Image hpBar;
+
     IEnumerator Start()
     {
         tr = GetComponent<Transform>();
         anime = GetComponent<Animation>();
+
+        hpBar = GameObject.FindGameObjectWithTag("HP_Bar").GetComponent<Image>();
+        DisplayHealth();
 
         anime.Play("Idle");
 
@@ -50,14 +54,20 @@ public class PlayerCtrl : MonoBehaviour
     {
         if (currHp >= 0f && other.CompareTag("Punch"))
         {
-            currHp -= 10f;
-            Debug.Log($"Player hp = {currHp / initHp}");
+            currHp -= 1f;
+            //Debug.Log($"Player hp = {currHp / initHp}");
+            DisplayHealth();
 
             if (currHp <= 0f)
             {
                 PlayerDie();
             }
         }
+    }
+
+    void DisplayHealth()
+    {
+        hpBar.fillAmount = currHp / initHp;
     }
 
     void PlayerDie()

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -37,27 +36,27 @@ public class FireCtrl : MonoBehaviour
 
     IEnumerator ShowMuzzleFlash()
     {
-        // ¿ÀÇÁ¼Â ÁÂÇ©°ªÀ» ·£´ı ÇÔ¼ö·Î »ı¼º
+        // ì˜¤í”„ì…‹ ì¢Œí‘¯ê°’ì„ ëœë¤ í•¨ìˆ˜ë¡œ ìƒì„±
         Vector2 offset = new Vector2(Random.Range(0, 2), Random.Range(0, 2)) * 0.5f;
         
-        // ÅØ½ºÃ³ÀÇ ¿ÀÇÁ¼Â °ª ¼³Á¤
+        // í…ìŠ¤ì²˜ì˜ ì˜¤í”„ì…‹ ê°’ ì„¤ì •
         muzzleFlash.material.mainTextureOffset = offset;
         
-        // MuzzleFlashÀÇ È¸Àü º¯°æ
+        // MuzzleFlashì˜ íšŒì „ ë³€ê²½
         float angle = Random.Range(0, 360);
         muzzleFlash.transform.localRotation = Quaternion.Euler(0, 0, angle);
         
-        // MuzzleFlashÀÇ Å©±â Á¶Àı
+        // MuzzleFlashì˜ í¬ê¸° ì¡°ì ˆ
         float scale = Random.Range(1.0f, 2.0f);
         muzzleFlash.transform.localScale = Vector3.one * scale;
         
-        // MuzzleFlash È°¼ºÈ­
+        // MuzzleFlash í™œì„±í™”
         muzzleFlash.enabled = true;
         
-        // 0.2ÃÊ µ¿¾È ´ë±â(Á¤Áö)ÇÏ´Â µ¿¾È ¸Ş½ÃÁö ·çÇÁ·Î Á¦¾î±ÇÀ» ¾çº¸
-        yield return new WaitForSeconds(0.2f);
+        // 0.2ì´ˆ ë™ì•ˆ ëŒ€ê¸°(ì •ì§€)í•˜ëŠ” ë™ì•ˆ ë©”ì‹œì§€ ë£¨í”„ë¡œ ì œì–´ê¶Œì„ ì–‘ë³´
+        yield return new WaitForSeconds(0.1f);
         
-        // MuzzleFlash ºñÈ°¼ºÈ­
+        // MuzzleFlash ë¹„í™œì„±í™”
         muzzleFlash.enabled = false;
     }
 }
